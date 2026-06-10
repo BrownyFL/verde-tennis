@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-verde-950: #0d1f14;
+  --color-verde-900: #1a3a2a;
+  --color-verde-800: #2d5a3d;
+  --color-verde-700: #3d7a52;
+  --color-verde-600: #4a8a5c;
+  --color-verde-500: #5fa870;
+  --color-verde-400: #7dc48e;
+  --color-verde-300: #a3d4af;
+  --color-verde-200: #c8e8d0;
+  --color-verde-100: #e8f5eb;
+
+  --color-cream-100: #faf7f2;
+  --color-cream-200: #f5f0e8;
+  --color-cream-300: #ede8dc;
+  --color-cream-400: #e0d8cc;
+  --color-cream-500: #cec4b4;
+
+  --color-gold-400: #d4a853;
+  --color-gold-500: #c49a3a;
+
+  --font-display: 'Bodoni Moda', Georgia, serif;
+  --font-body: 'Jost', system-ui, sans-serif;
+
+  --animate-fade-up: fade-up 0.6s ease forwards;
+  --animate-fade-in: fade-in 0.5s ease forwards;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Tailwind v4 utilities live inside a cascade layer; an unlayered
+   `* { margin: 0; padding: 0 }` reset would override every p-*/m-*/mx-auto
+   utility on the whole site. Preflight (from `@import "tailwindcss"`)
+   already resets margins, padding and box-sizing, so no manual reset needed. */
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  /* Dark backdrop so the page-transition fade composites dark-over-dark
+     instead of revealing a bright cream layer behind the incoming page
+     (which read as a harsh flash). Every page paints its own full background,
+     so this colour is only ever visible during the transition / overscroll. */
+  background-color: #0d1f14;
+  color: #1a3a2a;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+}
+
+/* ── Lenis smooth scroll (must override native smooth scrolling) ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ── Page transition (enter-only fade, compositor-driven) ── */
+/* Symmetric ease so opacity rises gradually instead of snapping up at the
+   start (an expo curve front-loads the fade and reads as a harsh flash). */
+.page-enter {
+  animation: page-enter 0.5s cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+@keyframes page-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Infinite marquee ribbon ── */
+.marquee__track {
+  animation-name: marquee-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .marquee__track { animation: none !important; }
+}
